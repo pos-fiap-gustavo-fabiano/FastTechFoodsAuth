@@ -15,17 +15,12 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	 <PackageReference Include="FastTechFoods.Observability" Version="2.0.0" />
 	 
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FastTechFoodsAuth.Infra\FastTechFoodsAuth.Infra.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="FastTechFoods.Observability">
-      <HintPath>..\..\libs\FastTechFoods.Observability.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
