@@ -35,12 +35,12 @@ builder.Services.AddFastTechFoodsObservability(
     otlpEndpoint: "http://4.198.128.197:4317"
 );
 var app = builder.Build();
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.Migrate();
-    await DbSeeder.SeedAsync(dbContext);
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//    dbContext.Database.Migrate();
+//    await DbSeeder.SeedAsync(dbContext);
+//}
 app.UseSwagger();
 app.UseSwaggerUI();
 
