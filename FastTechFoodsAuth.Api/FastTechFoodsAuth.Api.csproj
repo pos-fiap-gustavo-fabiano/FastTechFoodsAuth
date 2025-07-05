@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.17">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	 
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FastTechFoodsAuth.Infra\FastTechFoodsAuth.Infra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FastTechFoods.Observability">
+      <HintPath>..\..\libs\FastTechFoods.Observability.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
