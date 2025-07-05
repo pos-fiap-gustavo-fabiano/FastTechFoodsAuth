@@ -27,10 +27,7 @@ var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING_DAT
     ?? builder.Configuration.GetConnectionString("Default");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString, opt =>
-    {
-        opt.CommandTimeout(60); // Define o tempo limite do comando para 60 segundos    
-    })); ;
+    options.UseNpgsql(connectionString)); ;
 
 builder.Services.AddFastTechFoodsObservability(
     serviceName: "FastTechFoodsAuth.Api",
