@@ -40,7 +40,7 @@ var app = builder.Build();
 //    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 //    //dbContext.Database.Migrate();
 //    await DbSeeder.SeedAsync(dbContext);
-}
+//}
 app.UseSwagger();
 app.UseSwaggerUI();
 
