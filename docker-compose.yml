@@ -1,0 +1,9 @@
+services:
+  fasttechfoodsauth:
+    image: fabianotxss/fasttechfoodsauth:latest
+    environment:
+      - CONNECTION_STRING_DATABASE=Host=ep-bitter-shape-60518629-pooler.us-east-1.aws.neon.tech;Port=5432;Database=FastTechFoodsAuth;Username=default;Password=T5XKqnAdvUw7
+      - JWT_SECRET=D9sF2k8k3nB8x4P7vL6hA1pC0rS3qW2e
+    ports:
+      - "8080:8080"
+    restart: unless-stopped

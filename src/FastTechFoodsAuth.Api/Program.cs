@@ -27,7 +27,10 @@ var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING_DAT
     ?? builder.Configuration.GetConnectionString("Default");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString)); ;
+    options.UseNpgsql(connectionString, opt =>
+    {
+        opt.CommandTimeout(60); // Define o tempo limite do comando para 60 segundos    
+    })); ;
 
 builder.Services.AddFastTechFoodsObservability(
     serviceName: "FastTechFoodsAuth.Api",
@@ -41,11 +44,8 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
     await DbSeeder.SeedAsync(dbContext);
 }
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthorization();
 
