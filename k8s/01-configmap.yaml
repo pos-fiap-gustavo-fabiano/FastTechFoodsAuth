@@ -21,10 +21,6 @@ data:
         "ServiceVersion": "1.0.0",
         "OtlpEndpoint": "http://4.198.128.197:4317"
       },
-      "HealthChecksUI": {
-        "DisableUI": true,
-        "HealthChecks": []
-      },
       "AllowedHosts": "*",
       "Jwt": {
         "Issuer": "FastTechFoodsAuth",
