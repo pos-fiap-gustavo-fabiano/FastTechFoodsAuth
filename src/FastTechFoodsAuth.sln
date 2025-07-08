@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTechFoodsAuth.UnitTests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTechFoodsAuth.IntegrationTests", "..\tests\FastTechFoodsAuth.IntegrationTests\FastTechFoodsAuth.IntegrationTests.csproj", "{54F43AD3-DBDA-48EB-8C30-6E020C531017}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastTechFoods.Observability", "..\..\FastTechFoodsObservability\FastTechFoods.Observability\src\FastTechFoods.Observability.csproj", "{D08103FD-7312-4295-A106-F2987AFD9B49}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,10 +49,6 @@ Global
 		{54F43AD3-DBDA-48EB-8C30-6E020C531017}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54F43AD3-DBDA-48EB-8C30-6E020C531017}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54F43AD3-DBDA-48EB-8C30-6E020C531017}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D08103FD-7312-4295-A106-F2987AFD9B49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D08103FD-7312-4295-A106-F2987AFD9B49}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D08103FD-7312-4295-A106-F2987AFD9B49}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D08103FD-7312-4295-A106-F2987AFD9B49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +60,5 @@ Global
 		{6287DF6D-7C41-400D-9190-14FDC274E990} = {1E8FBC06-0902-48A0-877A-116F34247A2B}
 		{9644441F-F864-4654-A74D-565E079E6DFC} = {644D8B6B-9350-44CF-80C1-846034B17C0D}
 		{54F43AD3-DBDA-48EB-8C30-6E020C531017} = {644D8B6B-9350-44CF-80C1-846034B17C0D}
-		{D08103FD-7312-4295-A106-F2987AFD9B49} = {1E8FBC06-0902-48A0-877A-116F34247A2B}
 	EndGlobalSection
 EndGlobal
