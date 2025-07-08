@@ -1,40 +1,101 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fasttechfoodsauth
+  name: fasttechfoods-auth
+  namespace: fasttechfoods
+  labels:
+    app: fasttechfoods-auth
+    component: api
+    version: v1
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: fasttechfoodsauth
+      app: fasttechfoods-auth
   template:
     metadata:
       labels:
-        app: fasttechfoodsauth
+        app: fasttechfoods-auth
     spec:
       containers:
-        - name: fasttechfoodsauth
+        - name: fasttechfoods-auth
           image: fabianotxss/fasttechfoodsauth:latest
           ports:
             - containerPort: 8080
+            - containerPort: 8081
           env:
-            - name: CONNECTION_STRING_DATABASE
-              value: "Host=ep-bitter-shape-60518629-pooler.us-east-1.aws.neon.tech;Port=5432;Database=FastTechFoodsAuth;Username=default;Password=T5XKqnAdvUw7"
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
             - name: JWT_SECRET
-              value: "D9sF2k8k3nB8x4P7vL6hA1pC0rS3qW2e"
+              valueFrom:
+                secretKeyRef:
+                  name: fasttechfoods-auth-secrets
+                  key: JWT_SECRET
+            - name: CONNECTION_STRING_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: fasttechfoods-auth-secrets
+                  key: CONNECTION_STRING_DATABASE
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+              readOnly: true
+            - name: tmp-volume
+              mountPath: /tmp      
           securityContext:
             capabilities:
               add: ["SYS_RESOURCE"]
+          volumes:
+            - name: config-volume
+              configMap:
+                name: fasttechfoods-auth-config
+            - name: tmp-volume
+              emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: fasttechfoodsauth
+  name: fasttechfoods-auth-service
+  namespace: fasttechfoods
+  labels:
+    app: fasttechfoods-auth
+    component: service
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 spec:
   type: LoadBalancer
   selector:
-    app: fasttechfoodsauth
+    app: fasttechfoods-auth
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: 8081
+    protocol: TCP
+  sessionAffinity: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fasttechfoods-auth-service-internal
+  namespace: fasttechfoods
+  labels:
+    app: fasttechfoods-auth
+    component: service-internal
+spec:
+  type: ClusterIP
+  selector:
+    app: fasttechfoods-auth
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: 8081
+    protocol: TCP

@@ -420,3 +420,4 @@ FodyWeavers.xsd
 /FastTechFoodsAuth.Api/Properties/launchSettings.json
 /FastTechFoodsAuth.Api/Properties/launchSettings.json
 /src/FastTechFoodsAuth.Api/Properties/launchSettings.json
+k8s/02-secrets.yaml

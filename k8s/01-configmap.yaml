@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fasttechfoods-auth-config
+  namespace: fasttechfoods
+  labels:
+    app: fasttechfoods-auth
+    component: config
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning",
+          "Microsoft.EntityFrameworkCore": "Warning"
+        }
+      },
+      Observability": {
+        "ServiceName": "FastTechFoodsAuth.Api",
+        "ServiceVersion": "1.0.0",
+         "OtlpEndpoint": "http://4.198.128.197:4317"
+      },
+      "AllowedHosts": "*",
+      "Jwt": {
+        "Issuer": "FastTechFoodsAuth",
+        "Audience": "FastTechFoods",
+        "ExpirationHours": 24
+      },
+      "Serilog": {
+        "MinimumLevel": {
+          "Default": "Information",
+          "Override": {
+            "Microsoft": "Warning",
+            "System": "Warning"
+          }
+        },
+        "WriteTo": [
+          {
+            "Name": "Console",
+            "Args": {
+              "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter, Serilog.Formatting.Compact"
+            }
+          }
+        ],
+        "Enrich": ["FromLogContext", "WithMachineName", "WithThreadId"],
+        "Properties": {
+          "Application": "FastTechFoodsAuth"
+        }
+      }
+    }

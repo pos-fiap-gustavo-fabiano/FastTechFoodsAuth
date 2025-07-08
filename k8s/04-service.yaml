@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fasttechfoods-auth-service
+  namespace: fasttechfoods
+  labels:
+    app: fasttechfoods-auth
+    component: service
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+spec:
+  type: LoadBalancer
+  selector:
+    app: fasttechfoods-auth
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: 8081
+    protocol: TCP
+  sessionAffinity: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fasttechfoods-auth-service-internal
+  namespace: fasttechfoods
+  labels:
+    app: fasttechfoods-auth
+    component: service-internal
+spec:
+  type: ClusterIP
+  selector:
+    app: fasttechfoods-auth
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: 8081
+    protocol: TCP
