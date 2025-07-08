@@ -62,7 +62,7 @@ metadata:
     app: fasttechfoods-auth
     component: service
   annotations:
-    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    service.beta.kubernetes.io/azure-load-balancer-internal: "false"
 spec:
   type: LoadBalancer
   selector:

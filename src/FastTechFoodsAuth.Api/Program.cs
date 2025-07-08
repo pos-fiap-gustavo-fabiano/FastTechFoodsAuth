@@ -61,10 +61,9 @@ try
 
     // ✨ Middleware de auditoria de segurança (opcional)
     app.UseFastTechFoodsSecurityAudit();
-    app.UseFastTechFoodsHealthChecksUI();
     app.UseAuthentication();
     app.UseAuthorization();
-
+    app.UseFastTechFoodsHealthChecksUI(); 
     app.MapControllers();
 
     Log.Information("FastTechFoodsAuth API iniciada com sucesso");
@@ -74,6 +73,7 @@ try
 catch (Exception ex)
 {
     Log.Fatal(ex, "Erro fatal ao iniciar a aplicação");
+
 }
 finally
 {

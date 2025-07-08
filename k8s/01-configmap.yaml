@@ -16,10 +16,14 @@ data:
           "Microsoft.EntityFrameworkCore": "Warning"
         }
       },
-      Observability": {
+      "Observability": {
         "ServiceName": "FastTechFoodsAuth.Api",
         "ServiceVersion": "1.0.0",
-         "OtlpEndpoint": "http://4.198.128.197:4317"
+        "OtlpEndpoint": "http://4.198.128.197:4317"
+      },
+      "HealthChecksUI": {
+        "DisableUI": true,
+        "HealthChecks": []
       },
       "AllowedHosts": "*",
       "Jwt": {

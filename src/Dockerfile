@@ -10,7 +10,6 @@ WORKDIR /src
 
 # Copy project files and restore dependencies
 COPY ["FastTechFoodsAuth.Api/FastTechFoodsAuth.Api.csproj", "FastTechFoodsAuth.Api/"]
-COPY ["FastTechFoodsAuth.Security/FastTechFoodsAuth.Security.csproj", "FastTechFoodsAuth.Security/"]
 COPY ["FastTechFoodsAuth.Application/FastTechFoodsAuth.Application.csproj", "FastTechFoodsAuth.Application/"]
 COPY ["FastTechFoodsAuth.Domain/FastTechFoodsAuth.Domain.csproj", "FastTechFoodsAuth.Domain/"]
 COPY ["FastTechFoodsAuth.Infra/FastTechFoodsAuth.Infra.csproj", "FastTechFoodsAuth.Infra/"]
