@@ -18,40 +18,40 @@ spec:
         app: fasttechfoods-auth
     spec:
       containers:
-        - name: fasttechfoods-auth
-          image: fabianotxss/fasttechfoodsauth:latest
-          ports:
-            - containerPort: 8080
-            - containerPort: 8081
-          env:
-            - name: ASPNETCORE_ENVIRONMENT
-              value: "Production"
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: fasttechfoods-auth-secrets
-                  key: JWT_SECRET
-            - name: CONNECTION_STRING_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: fasttechfoods-auth-secrets
-                  key: CONNECTION_STRING_DATABASE
-          volumeMounts:
-            - name: config-volume
-              mountPath: /app/appsettings.json
-              subPath: appsettings.json
-              readOnly: true
-            - name: tmp-volume
-              mountPath: /tmp      
-          securityContext:
-            capabilities:
-              add: ["SYS_RESOURCE"]
-          volumes:
-            - name: config-volume
-              configMap:
-                name: fasttechfoods-auth-config
-            - name: tmp-volume
-              emptyDir: {}
+      - name: fasttechfoods-auth
+        image: fabianotxss/fasttechfoodsauth:latest
+        ports:
+        - containerPort: 8080
+        - containerPort: 8081
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: fasttechfoods-auth-secrets
+              key: JWT_SECRET
+        - name: CONNECTION_STRING_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: fasttechfoods-auth-secrets
+              key: CONNECTION_STRING_DATABASE
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/appsettings.json
+          subPath: appsettings.json
+          readOnly: true
+        - name: tmp-volume
+          mountPath: /tmp
+        securityContext:
+          capabilities:
+            add: ["SYS_RESOURCE"]
+      volumes:
+      - name: config-volume
+        configMap:
+          name: fasttechfoods-auth-config
+      - name: tmp-volume
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
