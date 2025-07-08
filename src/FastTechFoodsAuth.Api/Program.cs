@@ -101,12 +101,9 @@ app.MapHealthChecks("/health/live", new HealthCheckOptions
 //    dbContext.Database.Migrate();
 //    await DbSeeder.SeedAsync(dbContext);
 //}
+app.UseSwagger();
+app.UseSwaggerUI();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 // Middleware de tratamento global de erros
 app.UseMiddleware<GlobalExceptionMiddleware>();
