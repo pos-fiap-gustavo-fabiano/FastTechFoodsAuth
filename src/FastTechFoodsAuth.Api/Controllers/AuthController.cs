@@ -62,7 +62,7 @@ namespace FastTechFoodsAuth.Api.Controllers
         /// <summary>
         /// Busca usuário autenticado (profile).
         /// </summary>
-        [HttpGet("me")]
+        [HttpGet("eu")]
         [Authorize]
         public async Task<ActionResult<UserDto>> Me()
         {
@@ -131,7 +131,7 @@ namespace FastTechFoodsAuth.Api.Controllers
         /// <summary>
         /// Endpoint para teste de autorização por role (apenas Admin).
         /// </summary>
-        [HttpGet("admin-only")]
+        [HttpGet("admin")]
         [Authorize(Roles = "Admin")]
         public ActionResult AdminOnly()
         {

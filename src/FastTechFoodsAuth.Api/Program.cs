@@ -29,16 +29,6 @@ try
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Minha API",
-        Version = "v1",
-        Description = $"Rodando no pod: {Environment.MachineName}"
-    });
-});
-// ✨ Configuração simplificada do Swagger com JWT usando a biblioteca
 builder.Services.AddFastTechFoodsSwaggerWithJwt("FastTechFoodsAuth API", "v1", "API de autenticação para o sistema FastTechFoods");
 
 // ✨ Configuração simplificada da autenticação JWT usando a biblioteca
