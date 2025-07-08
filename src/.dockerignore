@@ -1,0 +1,103 @@
+# Docker ignore file for FastTechFoodsAuth
+# Optimizes build context and reduces image size
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Visual Studio / Visual Studio Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+**/bin/
+**/obj/
+**/out/
+**/TestResults/
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# Test files
+**/*Tests/
+**/*.Tests/
+**/test/
+**/tests/
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Docker
+Dockerfile*
+docker-compose*
+
+# Kubernetes
+k8s/
+*.yaml
+*.yml
+
+# CI/CD
+.github/
+azure-pipelines.yml
+.azure/
+
+# Development files
+*.orig
+*.rej
+*.bak
+
+# Environment files (should be in secrets)
+.env
+.env.local
+.env.production
+
+# Coverage reports
+coverage/
+*.coverage
+*.coveragexml
+
+# Rider
+.idea/
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# JustMock
+*.jmconfig
+
+# BenchmarkDotNet
+BenchmarkDotNet.Artifacts/
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/

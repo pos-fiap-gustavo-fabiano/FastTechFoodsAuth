@@ -50,7 +50,7 @@ namespace FastTechFoodsAuth.Application.Services
             return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<AuthResultDto> LoginAsync(LoginDto input)
+        public async Task<AuthResultDto> LoginAsync(LoginRequestDto input)
         {
             User user = null;
             if (input.EmailOrCpf.Contains("@"))

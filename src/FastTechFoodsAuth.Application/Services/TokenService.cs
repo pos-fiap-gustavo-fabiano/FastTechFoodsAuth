@@ -21,18 +21,29 @@ namespace FastTechFoodsAuth.Application.Services
         {
             var claims = new[]
             {
-                new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("name", user.Name),
                 new Claim("roles", string.Join(",", user.UserRoles?.Select(ur => ur.Role.Name) ?? new List<string>()))
             };
-            var JWT_SECRET = Environment.GetEnvironmentVariable("JWT_SECRET");
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWT_SECRET));
+
+            var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") 
+                ?? _configuration["Jwt:Key"];
+            
+            if (string.IsNullOrEmpty(jwtSecret))
+                throw new InvalidOperationException("JWT Secret not configured");
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            var expirationHours = int.Parse(_configuration["Jwt:ExpirationHours"] ?? "2");
+
             var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(2),
+                expires: DateTime.UtcNow.AddHours(expirationHours),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
