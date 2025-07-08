@@ -38,7 +38,7 @@ env:
   AZURE_CONTAINER_REGISTRY: "hackathonpostech.azurecr.io"
   CONTAINER_NAME: "hackathonpostech"
   RESOURCE_GROUP: "rg-hackathon"
-  CLUSTER_NAME: "rg-hackathon"
+  CLUSTER_NAME: "aks-hackathon"
   DEPLOYMENT_MANIFEST_PATH: "your-deployment-manifest-path"
 
 jobs:
