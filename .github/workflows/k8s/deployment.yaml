@@ -35,11 +35,10 @@ kind: Service
 metadata:
   name: fasttechfoodsauth
 spec:
-  type: NodePort  # apenas uma vez!
+  type: LoadBalancer
   selector:
     app: fasttechfoodsauth
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
-      nodePort: 30080  # Porta externa opcional, entre 30000-32767
