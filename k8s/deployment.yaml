@@ -35,12 +35,10 @@ kind: Service
 metadata:
   name: fasttechfoodsauth
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: fasttechfoodsauth
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
-      nodePort: 30080  # Porta externa que você vai acessar
-  type: NodePort  # Expondo o serviço via NodePort
