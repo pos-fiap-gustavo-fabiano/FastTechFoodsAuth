@@ -7,6 +7,8 @@ metadata:
     app: fasttechfoods-auth
     component: api
     version: v1
+    workflowFriendlyName: Build_and_deploy_an_app_to_AKS
+    workflow: actions.github.com-k8s-deploy
 spec:
   replicas: 3
   selector:
@@ -61,6 +63,8 @@ metadata:
   labels:
     app: fasttechfoods-auth
     component: service
+    workflowFriendlyName: Build_and_deploy_an_app_to_AKS
+    workflow: actions.github.com-k8s-deploy
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-internal: "false"
 spec:
@@ -86,6 +90,8 @@ metadata:
   labels:
     app: fasttechfoods-auth
     component: service-internal
+    workflowFriendlyName: Build_and_deploy_an_app_to_AKS
+    workflow: actions.github.com-k8s-deploy
 spec:
   type: ClusterIP
   selector:
