@@ -52,18 +52,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # - name: Login to Docker Hub
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./src
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/fasttechfoodsauth:latest
+      # - name: Build and push Docker image
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./src
+      #     push: true
+      #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/fasttechfoodsauth:latest
   #buildImage:
     # permissions:
     #   contents: read
