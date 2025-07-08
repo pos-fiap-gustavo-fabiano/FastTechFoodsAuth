@@ -17,7 +17,7 @@ data:
         }
       },
       "Observability": {
-        "ServiceName": "FastTechFoodsAuth.Api",
+        "ServiceName": "FastTechFoodsAuth-Aks.Api",
         "ServiceVersion": "1.0.0",
         "OtlpEndpoint": "http://4.198.128.197:4317"
       },
@@ -47,5 +47,13 @@ data:
         "Properties": {
           "Application": "FastTechFoodsAuth"
         }
+      },
+      "HealthChecks-UI": {
+        "HealthChecks": [
+          {
+            "Name": "FastTechFoodsAuth.Api",
+            "Uri": "http://localhost:8080/health"
+          }
+        ]
       }
     }
