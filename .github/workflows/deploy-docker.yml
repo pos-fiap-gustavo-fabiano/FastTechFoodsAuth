@@ -3,7 +3,7 @@ name: Build and Push Docker image to Docker Hub
 on:
   push:
     branches:
-      - main
+      - disabled  # Change to your desired branch, e.g., 'main' or 'master'
 
 jobs:
   build-and-push:
