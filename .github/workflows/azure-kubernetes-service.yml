@@ -36,7 +36,7 @@ on:
 
 env:
   AZURE_CONTAINER_REGISTRY: "hackathonpostech.azurecr.io"
-  CONTAINER_NAME: "hackathonpostech"
+  CONTAINER_NAME: "fasttechfoods-auth"
   RESOURCE_GROUP: "rg-hackathon"
   CLUSTER_NAME: "aks-hackathon"
   DEPLOYMENT_MANIFEST_PATH: "your-deployment-manifest-path"
