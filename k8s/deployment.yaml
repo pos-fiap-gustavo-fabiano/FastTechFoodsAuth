@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: fasttechfoodsauth
 spec:
-  replicas: 10
+  replicas: 3
   selector:
     matchLabels:
       app: fasttechfoodsauth
@@ -15,10 +15,6 @@ spec:
       containers:
         - name: fasttechfoodsauth
           image: fabianotxss/fasttechfoodsauth:latest
-          resources:
-            limits:
-              cpu: "500m"
-              memory: "256Mi"
           ports:
             - containerPort: 8080
           env:

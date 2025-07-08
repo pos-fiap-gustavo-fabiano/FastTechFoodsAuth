@@ -14,21 +14,9 @@ using FastTechFoodsAuth.Api.HealthChecks;
 using Serilog;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using FastTechFoodsAuth.Security.Extensions;
+using Microsoft.OpenApi.Models;
 
 
-// Configurar Serilog
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json")
-        .AddEnvironmentVariables()
-        .Build())
-    .WriteTo.Console()
-    .WriteTo.File("logs/fasttechfoodsauth-.log", 
-        rollingInterval: RollingInterval.Day,
-        retainedFileCountLimit: 7)
-    .Enrich.FromLogContext()
-    .Enrich.WithProperty("Application", "FastTechFoodsAuth")
-    .CreateLogger();
 
 try
 {
@@ -36,12 +24,20 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
     
-    // Usar Serilog como provider de logging
-    builder.Host.UseSerilog();
+  
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Minha API",
+        Version = "v1",
+        Description = $"Rodando no pod: {Environment.MachineName}"
+    });
+});
 // ✨ Configuração simplificada do Swagger com JWT usando a biblioteca
 builder.Services.AddFastTechFoodsSwaggerWithJwt("FastTechFoodsAuth API", "v1", "API de autenticação para o sistema FastTechFoods");
 
