@@ -61,7 +61,6 @@ try
 
     // ✨ Middleware de auditoria de segurança (opcional)
     app.UseFastTechFoodsSecurityAudit();
-    app.UseFastTechFoodsHealthChecksUI();
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseFastTechFoodsHealthChecksUI(); 
