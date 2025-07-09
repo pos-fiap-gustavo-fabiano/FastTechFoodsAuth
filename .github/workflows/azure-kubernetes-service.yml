@@ -67,11 +67,12 @@ jobs:
       # Builds and pushes an image up to your Azure Container Registry
       - name: Build Docker image
         run: |
-          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ github.sha }} ./src
+          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ github.sha }} -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:latest ./src
 
       - name: Push Docker image
         run: |
           docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ github.sha }}
+          docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:latest
 
   deploy:
     permissions:
@@ -114,7 +115,7 @@ jobs:
           action: deploy
           manifests: ${{ env.DEPLOYMENT_MANIFEST_PATH }}
           images: |
-            hackathonpostech.azurecr.io/fasttechfoods-auth:${{ github.sha }}
+            hackathonpostech.azurecr.io/fasttechfoods-auth:latest
 
       - name: Restart deployment to pull latest image
         run: |
