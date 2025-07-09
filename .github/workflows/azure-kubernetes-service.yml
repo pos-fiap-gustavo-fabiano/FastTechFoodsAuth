@@ -42,39 +42,36 @@ env:
   DEPLOYMENT_MANIFEST_PATH: "k8s/deployment.yaml"
 
 jobs:
-  build-and-push:
+  buildImage:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
-    outputs:
-      image-tag: ${{ steps.meta.outputs.tags }}
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # Checks out the repository this file is in
+      - uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to Docker Hub
+      # Logs in with your Azure credentials
+      - name: Azure login
+        uses: azure/login@v1.4.6
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Log in to Azure Container Registry
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: hackathonpostech.azurecr.io
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      # Builds and pushes an image up to your Azure Container Registry
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ github.sha }} ./src
 
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/fasttechfoodsauth
-          tags: |
-            type=raw,value=latest
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./src
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}:${{ github.sha }}
 
   deploy:
     permissions:
@@ -82,7 +79,7 @@ jobs:
       contents: read
       id-token: write
     runs-on: ubuntu-latest
-    needs: [build-and-push]
+    needs: [buildImage]
     steps:
       # Checks out the repository this file is in
       - uses: actions/checkout@v4
@@ -117,7 +114,7 @@ jobs:
           action: deploy
           manifests: ${{ env.DEPLOYMENT_MANIFEST_PATH }}
           images: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/fasttechfoodsauth:latest
+            hackathonpostech.azurecr.io/fasttechfoods-auth:${{ github.sha }}
 
       - name: Restart deployment to pull latest image
         run: |

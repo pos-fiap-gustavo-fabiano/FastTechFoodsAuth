@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: fasttechfoods-auth
-        image: fabianotxss/fasttechfoodsauth:latest
+        image: hackathonpostech.azurecr.io/fasttechfoods-auth:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
