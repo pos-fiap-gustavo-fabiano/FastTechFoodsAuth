@@ -1,4 +1,4 @@
-using FastTechFoods.Observability;
+using FastTechFoodsAuth.Api.Config;
 using FastTechFoodsAuth.Api.Middleware;
 using FastTechFoodsAuth.Application.Interfaces;
 using FastTechFoodsAuth.Application.Mapping;
@@ -21,7 +21,11 @@ try
     builder.Services.AddEndpointsApiExplorer();
 
     builder.Services.AddFastTechFoodsSwaggerWithJwt("FastTechFoodsAuth API", "v1", "API de autenticação para o sistema FastTechFoods");
-
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll", policy =>
+            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+    });
     // ✨ Configuração simplificada da autenticação JWT usando a biblioteca
     builder.Services.AddFastTechFoodsJwtAuthentication(builder.Configuration);
     builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
@@ -41,29 +45,22 @@ try
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(connectionString)); ;
-   
 
-    builder.Services.AddFastTechFoodsObservabilityAndHealthChecks<ApplicationDbContext>(builder.Configuration);
+
+    ObservabilityConfig.AddObservability(builder);
 
     var app = builder.Build();
 
-    //using (var scope = app.Services.CreateScope())
-    //{
-    //    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    //    dbContext.Database.Migrate();
-    //    await DbSeeder.SeedAsync(dbContext);
-    //}
     app.UseSwagger();
     app.UseSwaggerUI();
-
+    app.UseCors("AllowAll");
     // Middleware de tratamento global de erros
     app.UseMiddleware<GlobalExceptionMiddleware>();
 
-    // ✨ Middleware de auditoria de segurança (opcional)
     app.UseFastTechFoodsSecurityAudit();
     app.UseAuthentication();
     app.UseAuthorization();
-    app.UseFastTechFoodsHealthChecksUI(); 
+    ObservabilityConfig.UseObservability(app);
     app.MapControllers();
 
     Log.Information("FastTechFoodsAuth API iniciada com sucesso");

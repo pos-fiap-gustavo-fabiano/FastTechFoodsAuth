@@ -24,7 +24,7 @@ namespace FastTechFoodsAuth.UnitTests.Services
         private void SetupConfiguration()
         {
             _configurationMock.Setup(c => c["Jwt:Key"])
-                .Returns("D9sF2k8k3nB8x4P7vL6hA1pC0rS3qW2e");
+                .Returns("D9sF2k8k3nB8x4P7vL6hA1pC0rS3qW2eX");
             _configurationMock.Setup(c => c["Jwt:Issuer"])
                 .Returns("FastTechFoodsAuth");
             _configurationMock.Setup(c => c["Jwt:Audience"])
@@ -90,7 +90,7 @@ namespace FastTechFoodsAuth.UnitTests.Services
         public void GenerateJwtToken_WithEnvironmentVariable_ShouldUseEnvironmentSecret()
         {
             // Arrange
-            Environment.SetEnvironmentVariable("JWT_SECRET", "environment_secret_key_32_chars");
+            Environment.SetEnvironmentVariable("JWT_SECRET", "environment_secret_key_32_chars_X");
             var tokenService = new TokenService(_configurationMock.Object);
             var user = TestDataBuilder.CreateValidUser();
 
@@ -116,7 +116,7 @@ namespace FastTechFoodsAuth.UnitTests.Services
             // Assert
             refreshToken.Should().NotBeNullOrEmpty();
             refreshToken.Should().HaveLength(32); // GUID without hyphens
-            Guid.TryParse(refreshToken, out _).Should().BeFalse(); // Should be N format (no hyphens)
+            Guid.TryParse(refreshToken, out _).Should().BeTrue(); // Should be a valid GUID in N format (no hyphens)
         }
 
         [Theory]

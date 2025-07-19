@@ -31,7 +31,8 @@ namespace FastTechFoodsAuth.Application.Services
             if (existing != null)
                 throw new Exception("Email already in use.");
 
-            var role = await _roleRepository.GetByNameAsync(input.Role ?? "Client");
+            var roleName = string.IsNullOrEmpty(input.Role) ? "Client" : input.Role;
+            var role = await _roleRepository.GetByNameAsync(roleName);
             if (role == null)
                 throw new Exception("Role not found.");
 

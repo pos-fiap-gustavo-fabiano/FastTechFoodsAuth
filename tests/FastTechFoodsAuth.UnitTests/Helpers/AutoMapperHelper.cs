@@ -13,7 +13,17 @@ namespace FastTechFoodsAuth.UnitTests.Helpers
             // until we resolve the AutoMapper version issue
             var mockMapper = new Mock<IMapper>();
             
-            // Setup basic mappings for tests
+            // Setup RegisterUserDto -> User mapping
+            mockMapper.Setup(m => m.Map<User>(It.IsAny<RegisterUserDto>()))
+                .Returns((RegisterUserDto dto) => new User
+                {
+                    Name = dto.Name,
+                    Email = dto.Email,
+                    CPF = dto.CPF,
+                    UserRoles = new List<UserRole>()
+                });
+            
+            // Setup User -> UserDto mapping
             mockMapper.Setup(m => m.Map<UserDto>(It.IsAny<User>()))
                 .Returns((User user) => new UserDto
                 {
@@ -21,7 +31,7 @@ namespace FastTechFoodsAuth.UnitTests.Helpers
                     Name = user.Name,
                     Email = user.Email,
                     CPF = user.CPF,
-                    Roles = user.UserRoles?.Select(ur => ur.Role.Name).ToList() ?? new List<string>()
+                    Roles = user.UserRoles?.Select(ur => ur.Role?.Name ?? "").Where(r => !string.IsNullOrEmpty(r)).ToList() ?? new List<string>()
                 });
                 
             return mockMapper.Object;

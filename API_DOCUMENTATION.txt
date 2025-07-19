@@ -1,0 +1,464 @@
+===============================================================================
+                        FASTTECHFOODS AUTH API - DOCUMENTAÇÃO
+===============================================================================
+
+BASE URL: https://<your-domain>/api
+Authentication: Bearer Token (JWT)
+
+===============================================================================
+                                AUTH ENDPOINTS
+===============================================================================
+
+1. REGISTER USER
+   URL: POST /api/auth/register
+   Auth: None (Anonymous)
+   Description: Registra um novo usuário no sistema
+
+   REQUEST BODY:
+   {
+     "email": "string (required)",
+     "cpf": "string (optional)",
+     "password": "string (required)",
+     "name": "string (required)",
+     "role": "string (required)" // Ex: "Customer", "Admin"
+   }
+
+   RESPONSES:
+   ✅ 200 OK - Usuário registrado com sucesso
+   {
+     "id": "guid",
+     "email": "string",
+     "cpf": "string",
+     "name": "string",
+     "roles": ["string"]
+   }
+
+   ❌ 400 Bad Request - Dados inválidos
+   {
+     "message": "string"
+   }
+
+   EXAMPLE REQUEST:
+   POST /api/auth/register
+   Content-Type: application/json
+   {
+     "email": "joao@exemplo.com",
+     "cpf": "12345678901",
+     "password": "MinhaSenh@123",
+     "name": "João Silva",
+     "role": "Customer"
+   }
+
+-------------------------------------------------------------------------------
+
+2. LOGIN
+   URL: POST /api/auth/login
+   Auth: None (Anonymous)
+   Description: Realiza login por Email ou CPF
+
+   REQUEST BODY:
+   {
+     "emailOrCpf": "string (required)", // Pode ser email ou CPF
+     "password": "string (required)"
+   }
+
+   RESPONSES:
+   ✅ 200 OK - Login realizado com sucesso
+   {
+     "token": "string (JWT Token)",
+     "refreshToken": "string",
+     "user": {
+       "id": "guid",
+       "email": "string",
+       "cpf": "string",
+       "name": "string",
+       "roles": ["string"]
+     }
+   }
+
+   ❌ 400 Bad Request - Dados inválidos (validação)
+   [
+     "string (error messages)"
+   ]
+
+   ❌ 401 Unauthorized - Credenciais inválidas
+   {
+     "message": "string"
+   }
+
+   EXAMPLE REQUEST:
+   POST /api/auth/login
+   Content-Type: application/json
+   {
+     "emailOrCpf": "joao@exemplo.com",
+     "password": "MinhaSenh@123"
+   }
+
+-------------------------------------------------------------------------------
+
+3. GET USER PROFILE (ME)
+   URL: GET /api/auth/eu
+   Auth: Bearer Token (Required)
+   Description: Busca dados do usuário autenticado
+
+   REQUEST HEADERS:
+   Authorization: Bearer <jwt_token>
+
+   RESPONSES:
+   ✅ 200 OK - Dados do usuário
+   {
+     "id": "guid",
+     "email": "string",
+     "cpf": "string",
+     "name": "string",
+     "roles": ["string"]
+   }
+
+   ❌ 401 Unauthorized - Token não fornecido ou inválido
+   {
+     "message": "Token não fornecido ou inválido",
+     "details": "O header Authorization com Bearer token é obrigatório",
+     "timestamp": "datetime"
+   }
+
+   ❌ 404 Not Found - Usuário não encontrado
+   {
+     "message": "Usuário não encontrado",
+     "details": "Nenhum usuário encontrado com ID: {guid}",
+     "timestamp": "datetime"
+   }
+
+   ❌ 500 Internal Server Error - Erro interno
+   {
+     "message": "Erro interno do servidor",
+     "details": "string",
+     "timestamp": "datetime"
+   }
+
+   EXAMPLE REQUEST:
+   GET /api/auth/eu
+   Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+-------------------------------------------------------------------------------
+
+4. ADMIN ONLY ENDPOINT
+   URL: GET /api/auth/admin
+   Auth: Bearer Token + Admin Role (Required)
+   Description: Endpoint de teste para verificar autorização por role
+
+   REQUEST HEADERS:
+   Authorization: Bearer <jwt_token>
+
+   RESPONSES:
+   ✅ 200 OK - Acesso autorizado
+   {
+     "message": "Acesso autorizado para Admin",
+     "userId": "string",
+     "userName": "string",
+     "roles": "string"
+   }
+
+   ❌ 401 Unauthorized - Token inválido
+   ❌ 403 Forbidden - Usuário não tem role Admin
+
+   EXAMPLE REQUEST:
+   GET /api/auth/admin
+   Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+-------------------------------------------------------------------------------
+
+5. TOKEN DEBUG INFO
+   URL: GET /api/auth/token-info
+   Auth: Bearer Token (Required)
+   Description: Endpoint para diagnóstico de token JWT (desenvolvimento)
+
+   REQUEST HEADERS:
+   Authorization: Bearer <jwt_token>
+
+   RESPONSES:
+   ✅ 200 OK - Informações do token
+   {
+     "isAuthenticated": "boolean",
+     "authenticationType": "string",
+     "name": "string",
+     "userIdDebugging": {
+       "fromSub": "string",
+       "fromJwtSub": "string",
+       "fromNameIdentifier": "string"
+     },
+     "totalClaims": "number",
+     "claims": [
+       {
+         "type": "string",
+         "value": "string",
+         "isStandardClaim": "boolean"
+       }
+     ],
+     "timestamp": "datetime"
+   }
+
+   ❌ 401 Unauthorized - Token inválido
+   ❌ 500 Internal Server Error - Erro ao analisar token
+   {
+     "message": "Erro ao analisar token",
+     "details": "string",
+     "timestamp": "datetime"
+   }
+
+   EXAMPLE REQUEST:
+   GET /api/auth/token-info
+   Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+===============================================================================
+                              INSTANCE ENDPOINTS
+===============================================================================
+
+6. GET INSTANCE INFO
+   URL: GET /api/instance/info
+   Auth: None (Anonymous)
+   Description: Retorna informações sobre a instância atual do pod/container
+
+   RESPONSES:
+   ✅ 200 OK - Informações da instância
+   {
+     "podName": "string",
+     "podNamespace": "string",
+     "podIp": "string",
+     "nodeName": "string",
+     "applicationName": "FastTechFoodsAuth.Api",
+     "version": "string",
+     "environment": "string",
+     "platform": "string",
+     "architecture": "number",
+     "workingSet": "number",
+     "startTime": "datetime",
+     "uptime": "timespan",
+     "requestId": "string",
+     "timestamp": "datetime",
+     "serviceAccount": "string",
+     "clusterName": "string"
+   }
+
+   ❌ 500 Internal Server Error - Erro interno
+   {
+     "Error": "Erro interno do servidor"
+   }
+
+   EXAMPLE REQUEST:
+   GET /api/instance/info
+
+-------------------------------------------------------------------------------
+
+7. GET POD NAME
+   URL: GET /api/instance/pod-name
+   Auth: None (Anonymous)
+   Description: Retorna apenas o nome do pod atual
+
+   RESPONSES:
+   ✅ 200 OK - Nome do pod
+   {
+     "podName": "string"
+   }
+
+   EXAMPLE REQUEST:
+   GET /api/instance/pod-name
+
+-------------------------------------------------------------------------------
+
+8. INSTANCE HEALTH CHECK
+   URL: GET /api/instance/health
+   Auth: None (Anonymous)
+   Description: Endpoint para verificar a saúde da instância
+
+   RESPONSES:
+   ✅ 200 OK - Instância saudável
+   {
+     "status": "Healthy",
+     "podName": "string",
+     "timestamp": "datetime",
+     "uptime": "timespan"
+   }
+
+   EXAMPLE REQUEST:
+   GET /api/instance/health
+
+===============================================================================
+                              HEALTH CHECK ENDPOINTS
+===============================================================================
+
+9. HEALTH CHECKS
+   URL: GET /health
+   Auth: None (Anonymous)
+   Description: Endpoint padrão de health checks do ASP.NET Core
+
+   RESPONSES:
+   ✅ 200 OK - Aplicação saudável
+   "Healthy"
+
+   ❌ 503 Service Unavailable - Aplicação não saudável
+   "Unhealthy"
+
+   EXAMPLE REQUEST:
+   GET /health
+
+-------------------------------------------------------------------------------
+
+10. HEALTH CHECKS DETAILED
+    URL: GET /health/detailed
+    Auth: None (Anonymous)
+    Description: Health checks detalhados com informações de cada componente
+
+    RESPONSES:
+    ✅ 200 OK - Status detalhado
+    {
+      "status": "Healthy|Degraded|Unhealthy",
+      "results": {
+        "database": {
+          "status": "Healthy|Unhealthy",
+          "description": "string",
+          "data": {}
+        },
+        "jwt": {
+          "status": "Healthy|Unhealthy",
+          "description": "string",
+          "data": {}
+        }
+      },
+      "totalDuration": "timespan"
+    }
+
+    EXAMPLE REQUEST:
+    GET /health/detailed
+
+-------------------------------------------------------------------------------
+
+11. HEALTH CHECKS UI
+    URL: GET /health-ui
+    Auth: None (Anonymous)
+    Description: Interface web para visualizar health checks
+
+    RESPONSES:
+    ✅ 200 OK - Página HTML da interface de health checks
+
+    EXAMPLE REQUEST:
+    GET /health-ui
+
+===============================================================================
+                                  JWT TOKEN
+===============================================================================
+
+JWT STRUCTURE:
+- Header: Algoritmo HS256
+- Payload: 
+  * sub: User ID (GUID)
+  * email: User email
+  * name: User name
+  * roles: User roles (comma-separated)
+  * iss: FastTechFoodsAuth
+  * aud: FastTechFoods
+  * iat: Issued at
+  * exp: Expiration (24 hours)
+
+TOKEN USAGE:
+Authorization: Bearer <token>
+
+===============================================================================
+                                ERROR RESPONSES
+===============================================================================
+
+COMMON ERROR FORMATS:
+
+400 Bad Request:
+{
+  "message": "string"
+}
+ou
+[
+  "error message 1",
+  "error message 2"
+]
+
+401 Unauthorized:
+{
+  "message": "string",
+  "details": "string",
+  "timestamp": "datetime"
+}
+
+403 Forbidden:
+{
+  "message": "string"
+}
+
+404 Not Found:
+{
+  "message": "string",
+  "details": "string",
+  "timestamp": "datetime"
+}
+
+500 Internal Server Error:
+{
+  "message": "string",
+  "details": "string",
+  "timestamp": "datetime"
+}
+
+===============================================================================
+                               ENVIRONMENT VARIABLES
+===============================================================================
+
+REQUIRED:
+- JWT_SECRET: Secret para assinatura dos tokens JWT
+- CONNECTION_STRING_DATABASE: String de conexão com o banco de dados
+
+OPTIONAL:
+- ASPNETCORE_ENVIRONMENT: Environment (Development/Production)
+- ASPNETCORE_URLS: URLs de bind da aplicação
+
+===============================================================================
+                                 EXAMPLE FLOWS
+===============================================================================
+
+1. REGISTRO E LOGIN COMPLETO:
+
+   1.1. Registrar usuário:
+   POST /api/auth/register
+   {
+     "email": "joao@exemplo.com",
+     "cpf": "12345678901",
+     "password": "MinhaSenh@123",
+     "name": "João Silva",
+     "role": "Customer"
+   }
+
+   1.2. Fazer login:
+   POST /api/auth/login
+   {
+     "emailOrCpf": "joao@exemplo.com",
+     "password": "MinhaSenh@123"
+   }
+
+   1.3. Usar token para acessar perfil:
+   GET /api/auth/eu
+   Authorization: Bearer <token_retornado_no_login>
+
+2. VERIFICAÇÃO DE SAÚDE:
+   GET /health
+   GET /api/instance/health
+   GET /api/instance/info
+
+===============================================================================
+                                    NOTES
+===============================================================================
+
+- Todos os endpoints retornam JSON, exceto health-ui
+- Timestamps são em UTC
+- GUIDs são no formato padrão .NET
+- Senhas devem seguir políticas de segurança (implementação específica)
+- CPF é opcional no registro mas pode ser usado para login
+- Roles são case-sensitive
+- Tokens JWT expiram em 24 horas
+- A aplicação suporta CORS para todos os origins (configurável)
+
+===============================================================================
