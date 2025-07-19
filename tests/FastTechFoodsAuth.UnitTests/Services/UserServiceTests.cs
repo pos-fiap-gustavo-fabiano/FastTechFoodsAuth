@@ -143,7 +143,7 @@ namespace FastTechFoodsAuth.UnitTests.Services
 
             // Assert
             result.Should().NotBeNull();
-            result.Token.Should().Be(expectedToken);
+            result.Access_Token.Should().Be(expectedToken);
             result.RefreshToken.Should().Be(expectedRefreshToken);
             result.User.Should().NotBeNull();
             result.User.Email.Should().Be(user.Email);
@@ -177,7 +177,7 @@ namespace FastTechFoodsAuth.UnitTests.Services
 
             // Assert
             result.Should().NotBeNull();
-            result.Token.Should().Be(expectedToken);
+            result.Access_Token.Should().Be(expectedToken);
             result.RefreshToken.Should().Be(expectedRefreshToken);
         }
 

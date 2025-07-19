@@ -68,7 +68,7 @@ namespace FastTechFoodsAuth.Application.Services
 
             return new AuthResultDto
             {
-                Token = token,
+                Access_Token = token,
                 RefreshToken = refreshToken,
                 User = _mapper.Map<UserDto>(user)
             };

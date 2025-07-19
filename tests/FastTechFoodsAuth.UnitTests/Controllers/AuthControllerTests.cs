@@ -98,7 +98,7 @@ namespace FastTechFoodsAuth.UnitTests.Controllers
 
             var expectedAuthResult = new AuthResultDto
             {
-                Token = "jwt_token",
+                Access_Token = "jwt_token",
                 RefreshToken = "refresh_token",
                 User = new UserDto
                 {
