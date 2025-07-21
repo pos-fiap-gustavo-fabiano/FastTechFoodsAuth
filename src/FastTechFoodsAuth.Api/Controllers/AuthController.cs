@@ -62,7 +62,7 @@ namespace FastTechFoodsAuth.Api.Controllers
         /// <summary>
         /// Busca usuário autenticado (profile).
         /// </summary>
-        [HttpGet("eu")]
+        [HttpGet("me")]
         [Authorize]
         public async Task<ActionResult<UserDto>> Me()
         {

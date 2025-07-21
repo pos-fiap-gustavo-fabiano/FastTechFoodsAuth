@@ -11,8 +11,6 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-
-
 try
 {
     Log.Information("Iniciando FastTechFoodsAuth API");
@@ -62,7 +60,8 @@ try
     app.UseAuthorization();
     ObservabilityConfig.UseObservability(app);
     app.MapControllers();
-
+    app.MapHealthChecks("/health");
+    app.MapHealthChecks("/health/ready");
     Log.Information("FastTechFoodsAuth API iniciada com sucesso");
     app.Run();
 
