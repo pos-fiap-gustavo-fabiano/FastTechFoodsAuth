@@ -28,14 +28,14 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/path: "/metrics"
     spec:
-      serviceAccountName: fasttechfoods-auth-sa
+      serviceAccountName: fasttechfoods-order-workload-identity-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
         fsGroup: 2000
       containers:
       - name: fasttechfoods-auth
-        image: fasttechfoodsauth:latest  # SUBSTITUA pela sua imagem no ACR
+        image: hackathonpostech.azurecr.io/fasttechfoods-auth:latest
         imagePullPolicy: Always
         ports:
         - name: http
@@ -48,7 +48,7 @@ spec:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Production"
         - name: ASPNETCORE_URLS
-          value: "http://+:8080;https://+:8081"
+          value: "http://+:8080"
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
@@ -78,7 +78,7 @@ spec:
             cpu: "500m"
         livenessProbe:
           httpGet:
-            path: /health/live
+            path: /health
             port: http
           initialDelaySeconds: 15
           periodSeconds: 20
@@ -94,7 +94,7 @@ spec:
           failureThreshold: 3
         startupProbe:
           httpGet:
-            path: /health/live
+            path: /health
             port: http
           initialDelaySeconds: 10
           periodSeconds: 5
