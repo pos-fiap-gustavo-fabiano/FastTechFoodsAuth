@@ -10,7 +10,7 @@ env:
   CONTAINER_NAME: "fasttechfoods-auth"
   RESOURCE_GROUP: "rg-hackathon"
   CLUSTER_NAME: "aks-hackathon"
-  DEPLOYMENT_MANIFEST_PATH: "k8s/deployment.yaml"
+  DEPLOYMENT_MANIFEST_PATH: "k8s/"
 
 jobs:
   test:

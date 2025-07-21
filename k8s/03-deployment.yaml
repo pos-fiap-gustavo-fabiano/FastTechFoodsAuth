@@ -66,6 +66,9 @@ spec:
           readOnly: true
         - name: tmp-volume
           mountPath: /tmp
+        - name: secrets-store-inline
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
         resources:
           requests:
             memory: "128Mi"
@@ -109,6 +112,12 @@ spec:
           name: fasttechfoods-auth-config
       - name: tmp-volume
         emptyDir: {}
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "fasttechfoods-auth-secrets-provider"
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
