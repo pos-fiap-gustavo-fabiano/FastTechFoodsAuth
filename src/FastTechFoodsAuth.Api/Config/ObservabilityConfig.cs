@@ -14,7 +14,6 @@ namespace FastTechFoodsAuth.Api.Config
 
         public static void UseObservability(WebApplication app)
         {
-            // app.UseFastTechFoodsHealthChecksUI(); // Comentado temporariamente para evitar erro de IPv6
             app.UseFastTechFoodsPrometheus();
         }
     }
