@@ -147,9 +147,6 @@ namespace FastTechFoodsAuth.Api.Controllers
             });
         }
 
-        /// <summary>
-        /// Endpoint para diagnóstico de token JWT (desenvolvimento).
-        /// </summary>
         [HttpGet("token-info")]
         [Authorize]
         public ActionResult TokenInfo()

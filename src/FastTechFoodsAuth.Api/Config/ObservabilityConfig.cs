@@ -11,7 +11,6 @@ namespace FastTechFoodsAuth.Api.Config
             builder.Services.AddFastTechFoodsPrometheus(builder.Configuration);
             builder.Services.AddFastTechFoodsHealthChecks<ApplicationDbContext>(builder.Configuration);
         }
-
         public static void UseObservability(WebApplication app)
         {
             app.UseFastTechFoodsPrometheus();
