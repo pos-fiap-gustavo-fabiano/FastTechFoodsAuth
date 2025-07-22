@@ -78,8 +78,6 @@ namespace FastTechFoodsAuth.Api.Controllers
                     });
                 }
 
-                // Busca o claim 'sub' (subject) que contém o ID do usuário
-                // Tenta diferentes formas de localizar a claim 'sub'
                 var userIdClaim = User.FindFirst("sub")?.Value 
                     ?? User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
                     ?? User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
