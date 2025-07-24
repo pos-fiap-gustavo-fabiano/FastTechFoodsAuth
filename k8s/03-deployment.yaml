@@ -35,7 +35,7 @@ spec:
         fsGroup: 2000
       containers:
       - name: fasttechfoods-auth
-        image: hackathonpostech.azurecr.io/fasttechfoods-auth:latest
+        image: fasttechfoods.azurecr.io/fasttechfoods-auth:latest
         imagePullPolicy: Always
         ports:
         - name: http
