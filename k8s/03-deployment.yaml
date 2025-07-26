@@ -28,7 +28,7 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/path: "/metrics"
     spec:
-      serviceAccountName: fasttechfoods-order-workload-identity-sa
+      serviceAccountName: fasttechfoods-auth-workload-identity-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
