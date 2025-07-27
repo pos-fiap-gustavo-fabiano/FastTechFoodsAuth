@@ -19,7 +19,7 @@ data:
       "Observability": {
         "ServiceName": "FastTechFoodsAuth-Aks.Api",
         "ServiceVersion": "1.0.0",
-        "OtlpEndpoint": "http://4.198.128.197:4317"
+        "OtlpEndpoint": "http://20.220.170.26:4317"
       },
       "AllowedHosts": "*",
       "Jwt": {
