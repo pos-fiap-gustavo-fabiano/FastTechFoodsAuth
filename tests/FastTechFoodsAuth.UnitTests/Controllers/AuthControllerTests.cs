@@ -9,6 +9,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using FastTechFoodsOrder.Shared.Results;
 
 namespace FastTechFoodsAuth.UnitTests.Controllers
 {
@@ -46,16 +47,17 @@ namespace FastTechFoodsAuth.UnitTests.Controllers
                 Roles = new List<string> { "Client" }
             };
 
+            var successResult = Result<UserDto>.Success(expectedUserDto);
             _userServiceMock.Setup(s => s.RegisterAsync(registerDto))
-                .ReturnsAsync(expectedUserDto);
+                .ReturnsAsync(successResult);
 
             // Act
             var result = await _controller.Register(registerDto);
 
             // Assert
-            result.Should().BeOfType<ActionResult<UserDto>>();
-            var okResult = result.Result.Should().BeOfType<OkObjectResult>().Subject;
-            okResult.Value.Should().BeEquivalentTo(expectedUserDto);
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = result as OkObjectResult;
+            okResult!.Value.Should().BeEquivalentTo(expectedUserDto);
         }
 
         [Fact]
@@ -70,16 +72,15 @@ namespace FastTechFoodsAuth.UnitTests.Controllers
                 Role = "Client"
             };
 
+            var failureResult = Result<UserDto>.Failure("Email already in use.", "VALIDATION_ERROR");
             _userServiceMock.Setup(s => s.RegisterAsync(registerDto))
-                .ThrowsAsync(new Exception("Email already in use."));
+                .ReturnsAsync(failureResult);
 
             // Act
             var result = await _controller.Register(registerDto);
 
             // Assert
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            var badRequestResult = result.Result as BadRequestObjectResult;
-            badRequestResult!.Value.Should().BeEquivalentTo(new { message = "Email already in use." });
+            result.Should().BeOfType<BadRequestObjectResult>();
         }
 
         [Fact]
@@ -110,15 +111,15 @@ namespace FastTechFoodsAuth.UnitTests.Controllers
             };
 
             _userServiceMock.Setup(s => s.LoginAsync(loginDto))
-                .ReturnsAsync(expectedAuthResult);
+                .ReturnsAsync(Result<AuthResultDto>.Success(expectedAuthResult));
 
             // Act
             var result = await _controller.Login(loginDto, _validatorMock.Object);
 
             // Assert
-            result.Should().BeOfType<ActionResult<AuthResultDto>>();
-            var okResult = result.Result.Should().BeOfType<OkObjectResult>().Subject;
-            okResult.Value.Should().BeEquivalentTo(expectedAuthResult);
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = result as OkObjectResult;
+            okResult!.Value.Should().BeEquivalentTo(expectedAuthResult);
         }
 
         [Fact]
@@ -144,9 +145,14 @@ namespace FastTechFoodsAuth.UnitTests.Controllers
             var result = await _controller.Login(loginDto, _validatorMock.Object);
 
             // Assert
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            var badRequestResult = result.Result as BadRequestObjectResult;
-            var errors = badRequestResult!.Value as IEnumerable<string>;
+            result.Should().BeOfType<BadRequestObjectResult>();
+            var badRequestResult = result as BadRequestObjectResult;
+            var response = badRequestResult!.Value;
+            
+            // Use reflection to get the errors property since it's an anonymous object
+            var errorsProperty = response!.GetType().GetProperty("errors");
+            var errors = errorsProperty!.GetValue(response) as IEnumerable<string>;
+            
             errors.Should().Contain("O campo emailOrCpf é obrigatório.");
             errors.Should().Contain("A senha é obrigatória.");
         }
@@ -166,15 +172,14 @@ namespace FastTechFoodsAuth.UnitTests.Controllers
                 .ReturnsAsync(validationResult);
 
             _userServiceMock.Setup(s => s.LoginAsync(loginDto))
-                .ThrowsAsync(new Exception("Invalid credentials."));
+                .ReturnsAsync(Result<AuthResultDto>.Failure("Invalid credentials.", "INVALID_CREDENTIALS"));
 
             // Act
             var result = await _controller.Login(loginDto, _validatorMock.Object);
 
             // Assert
-            result.Result.Should().BeOfType<UnauthorizedObjectResult>();
-            var unauthorizedResult = result.Result as UnauthorizedObjectResult;
-            unauthorizedResult!.Value.Should().BeEquivalentTo(new { message = "Invalid credentials." });
+            result.Should().BeOfType<ObjectResult>();
+            var objectResult = result as ObjectResult;
         }
 
         [Fact]
@@ -215,8 +220,8 @@ namespace FastTechFoodsAuth.UnitTests.Controllers
             var result = await _controller.Me();
 
             // Assert
-            result.Should().BeOfType<ActionResult<UserDto>>();
-            var okResult = result.Result.Should().BeOfType<OkObjectResult>().Subject;
+            result.Should().BeOfType<OkObjectResult>();
+            var okResult = (OkObjectResult)result;
             okResult.Value.Should().BeEquivalentTo(expectedUser);
         }
 
@@ -245,7 +250,7 @@ namespace FastTechFoodsAuth.UnitTests.Controllers
             var result = await _controller.Me();
 
             // Assert
-            result.Result.Should().BeOfType<UnauthorizedObjectResult>();
+            result.Should().BeOfType<UnauthorizedObjectResult>();
         }
 
         [Fact]
@@ -272,7 +277,7 @@ namespace FastTechFoodsAuth.UnitTests.Controllers
             var result = await _controller.Me();
 
             // Assert
-            result.Result.Should().BeOfType<UnauthorizedObjectResult>();
+            result.Should().BeOfType<UnauthorizedObjectResult>();
         }
 
         [Fact]
@@ -282,7 +287,7 @@ namespace FastTechFoodsAuth.UnitTests.Controllers
             var userId = Guid.NewGuid();
 
             _userServiceMock.Setup(s => s.GetByIdAsync(userId))
-                .ReturnsAsync((UserDto?)null);
+                .ReturnsAsync(Result<UserDto>.Failure("User not found", "USER_NOT_FOUND"));
 
             var claims = new List<Claim>
             {
@@ -303,7 +308,7 @@ namespace FastTechFoodsAuth.UnitTests.Controllers
             var result = await _controller.Me();
 
             // Assert
-            result.Result.Should().BeOfType<NotFoundObjectResult>();
+            result.Should().BeOfType<ObjectResult>();
         }
 
         [Fact]

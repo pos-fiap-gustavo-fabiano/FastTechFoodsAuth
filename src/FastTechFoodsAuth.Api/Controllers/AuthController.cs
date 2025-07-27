@@ -4,12 +4,14 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
+using FastTechFoodsOrder.Shared.Controllers;
+using FastTechFoodsOrder.Shared.Results;
 
 namespace FastTechFoodsAuth.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseController
     {
         private readonly IUserService _userService;
 
@@ -23,17 +25,10 @@ namespace FastTechFoodsAuth.Api.Controllers
         /// </summary>
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterUserDto dto)
+        public async Task<IActionResult> Register([FromBody] RegisterUserDto dto)
         {
-            try
-            {
-                var user = await _userService.RegisterAsync(dto);
-                return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var result = await _userService.RegisterAsync(dto);
+            return ToActionResult(result);
         }
 
         /// <summary>
@@ -41,22 +36,21 @@ namespace FastTechFoodsAuth.Api.Controllers
         /// </summary>
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult<AuthResultDto>> Login([FromBody] LoginRequestDto dto, IValidator<LoginRequestDto> validator)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto dto, IValidator<LoginRequestDto> validator)
         {
             var validation = await validator.ValidateAsync(dto);
             if (!validation.IsValid)
             {
-                return BadRequest(validation.Errors.Select(e => e.ErrorMessage));
+                var validationErrors = validation.Errors.Select(e => e.ErrorMessage).ToList();
+                return BadRequest(new { 
+                    message = "Dados de entrada inválidos", 
+                    errors = validationErrors,
+                    timestamp = DateTime.UtcNow 
+                });
             }
-            try
-            {
-                var result = await _userService.LoginAsync(dto);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return Unauthorized(new { message = ex.Message });
-            }
+
+            var result = await _userService.LoginAsync(dto);
+            return ToActionResult(result);
         }
 
         /// <summary>
@@ -64,66 +58,14 @@ namespace FastTechFoodsAuth.Api.Controllers
         /// </summary>
         [HttpGet("me")]
         [Authorize]
-        public async Task<ActionResult<UserDto>> Me()
+        public async Task<IActionResult> Me()
         {
-            try
-            {
-                // Verifica se o usuário está autenticado
-                if (!User.Identity?.IsAuthenticated ?? true)
-                {
-                    return Unauthorized(new { 
-                        message = "Token não fornecido ou inválido",
-                        details = "O header Authorization com Bearer token é obrigatório",
-                        timestamp = DateTime.UtcNow 
-                    });
-                }
+            var userIdResult = GetUserIdFromToken();
+            if (!userIdResult.IsSuccess)
+                return ToActionResult(userIdResult);
 
-                var userIdClaim = User.FindFirst("sub")?.Value 
-                    ?? User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
-                    ?? User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
-                
-                if (string.IsNullOrEmpty(userIdClaim))
-                {
-                    // Debug: Mostra todas as claims disponíveis para diagnóstico
-                    var availableClaims = User.Claims.Select(c => new { Type = c.Type, Value = c.Value }).ToList();
-                    
-                    return Unauthorized(new { 
-                        message = "Token inválido", 
-                        details = "Claim 'sub' não encontrado no token",
-                        availableClaims = availableClaims, // Para debug
-                        timestamp = DateTime.UtcNow 
-                    });
-                }
-
-                if (!Guid.TryParse(userIdClaim, out Guid userId))
-                {
-                    return Unauthorized(new { 
-                        message = "Token inválido", 
-                        details = "Claim 'sub' não contém um GUID válido",
-                        timestamp = DateTime.UtcNow 
-                    });
-                }
-
-                var user = await _userService.GetByIdAsync(userId);
-                if (user == null)
-                {
-                    return NotFound(new { 
-                        message = "Usuário não encontrado", 
-                        details = $"Nenhum usuário encontrado com ID: {userId}",
-                        timestamp = DateTime.UtcNow 
-                    });
-                }
-
-                return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { 
-                    message = "Erro interno do servidor", 
-                    details = ex.Message,
-                    timestamp = DateTime.UtcNow 
-                });
-            }
+            var result = await _userService.GetByIdAsync(userIdResult.Value);
+            return ToActionResult(result);
         }
 
         /// <summary>
@@ -131,15 +73,18 @@ namespace FastTechFoodsAuth.Api.Controllers
         /// </summary>
         [HttpGet("admin")]
         [Authorize(Roles = "Admin")]
-        public ActionResult AdminOnly()
+        public IActionResult AdminOnly()
         {
-            var userIdClaim = User.FindFirst("sub")?.Value;
+            var userIdResult = GetUserIdFromToken();
+            if (!userIdResult.IsSuccess)
+                return ToActionResult(userIdResult);
+
             var userName = User.FindFirst("name")?.Value;
             var userRoles = User.FindFirst("roles")?.Value;
 
             return Ok(new { 
                 message = "Acesso autorizado para Admin", 
-                userId = userIdClaim, 
+                userId = userIdResult.Value, 
                 userName = userName,
                 roles = userRoles 
             });
@@ -147,49 +92,56 @@ namespace FastTechFoodsAuth.Api.Controllers
 
         [HttpGet("token-info")]
         [Authorize]
-        public ActionResult TokenInfo()
+        public IActionResult TokenInfo()
         {
-            try
-            {
-                var claims = User.Claims.Select(c => new { 
-                    Type = c.Type, 
-                    Value = c.Value,
-                    // Adiciona informação se é uma claim padrão
-                    IsStandardClaim = c.Type.StartsWith("http://schemas") || 
-                                     c.Type == "sub" || c.Type == "email" || c.Type == "name" || c.Type == "roles"
-                }).ToList();
-                
-                var identity = User.Identity;
+            var claims = User.Claims.Select(c => new { 
+                Type = c.Type, 
+                Value = c.Value,
+                IsStandardClaim = c.Type.StartsWith("http://schemas") || 
+                                 c.Type == "sub" || c.Type == "email" || c.Type == "name" || c.Type == "roles"
+            }).ToList();
+            
+            var identity = User.Identity;
+            var userIdResult = GetUserIdFromToken();
 
-                // Tenta diferentes formas de obter o ID do usuário
-                var userIdFromSub = User.FindFirst("sub")?.Value;
-                var userIdFromJwtSub = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
-                var userIdFromNameIdentifier = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
-
-                return Ok(new
-                {
-                    isAuthenticated = identity?.IsAuthenticated ?? false,
-                    authenticationType = identity?.AuthenticationType,
-                    name = identity?.Name,
-                    userIdDebugging = new
-                    {
-                        fromSub = userIdFromSub,
-                        fromJwtSub = userIdFromJwtSub,
-                        fromNameIdentifier = userIdFromNameIdentifier
-                    },
-                    totalClaims = claims.Count,
-                    claims = claims,
-                    timestamp = DateTime.UtcNow
-                });
-            }
-            catch (Exception ex)
+            return Ok(new
             {
-                return StatusCode(500, new { 
-                    message = "Erro ao analisar token", 
-                    details = ex.Message,
-                    timestamp = DateTime.UtcNow 
-                });
+                isAuthenticated = identity?.IsAuthenticated ?? false,
+                authenticationType = identity?.AuthenticationType,
+                name = identity?.Name,
+                userId = userIdResult.IsSuccess ? userIdResult.Value : (Guid?)null,
+                userIdError = !userIdResult.IsSuccess ? userIdResult.ErrorMessage : null,
+                totalClaims = claims.Count,
+                claims = claims,
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        /// <summary>
+        /// Extrai o ID do usuário do token JWT.
+        /// </summary>
+        private Result<Guid> GetUserIdFromToken()
+        {
+            if (!User.Identity?.IsAuthenticated ?? true)
+            {
+                return Result<Guid>.Failure("Token não fornecido ou inválido", "UNAUTHORIZED");
             }
+
+            var userIdClaim = User.FindFirst("sub")?.Value 
+                ?? User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+                ?? User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return Result<Guid>.Failure("Token inválido - Claim 'sub' não encontrado", "UNAUTHORIZED");
+            }
+
+            if (!Guid.TryParse(userIdClaim, out Guid userId))
+            {
+                return Result<Guid>.Failure("Token inválido - Claim 'sub' não contém um GUID válido", "UNAUTHORIZED");
+            }
+
+            return Result<Guid>.Success(userId);
         }
     }
 }
