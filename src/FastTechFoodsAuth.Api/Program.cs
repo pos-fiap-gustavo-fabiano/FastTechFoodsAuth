@@ -64,7 +64,6 @@ try
     app.MapHealthChecks("/health/ready");
     Log.Information("FastTechFoodsAuth API iniciada com sucesso");
     app.Run();
-
 }
 catch (Exception ex)
 {
